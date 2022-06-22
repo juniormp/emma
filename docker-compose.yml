@@ -1,14 +1,16 @@
-version: "2"
+version: "3.8"
 
 services:
-  node-ts-otimizado:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: example-web-server
+  postgres:
+    image: postgres:10.3
+    restart: always
+    environment:
+      - POSTGRES_USER=sammy
+      - POSTGRES_PASSWORD=your_password
     volumes:
-      - ./src:/app/src
+      - postgres:/var/lib/postgresql/data
     ports:
-      - "8080:8080"
-      - "8181:8181"
-    command: npm run dev
+      - "5432:5432"
+
+volumes:
+  postgres:
