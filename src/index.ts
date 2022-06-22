@@ -1,25 +1,26 @@
-import * as express from "express";
+import express = require("express")
+import { ClaimFreeShareUseCase } from "./application/reward/ClaimFreeShareUseCase"
+import * as dotenv from "dotenv"
+import { BuyFreeShareUseCase } from "./application/reward/BuyFreeShareUseCase";
 
-const PORT = 8080; // Porta do nosso servidor web
+const app = express();  
+dotenv.config();
 
-const app = express(); // Criamos uma instância do express
-
-// Adicionamos uma rota de teste
-app.get("/hello-world", (req: express.Request, res: express.Response) => {
-  res.json({
-    message: "Hello World",
-  });
+app.listen(process.env.PORT, () => {
+  console.log(`Aplicação escutando na porta ${process.env.PORT}`);
 });
 
-// Adicionamos uma rota de teste com parametros
-app.get("/hello-world/:nome", (req: express.Request, res: express.Response) => {
-  const { nome } = req.params;
-  res.json({
-    message: `Olá ${nome}!`,
-  });
+app.post("/claim", (req: express.Request, res: express.Response) => {
+
+  const claimFreeShareUseCase = new ClaimFreeShareUseCase();
+  claimFreeShareUseCase.execute(2);
+
+  res.json(true);
 });
 
-// Iniciamos nosso servidor web
-app.listen(PORT, () => {
-  console.log(`Aplicação escutando na porta ${PORT}`);
+app.post("/buy-share", (req: express.Request, res: express.Response) => {
+  const buyFreeShareUseCase = new BuyFreeShareUseCase()
+  buyFreeShareUseCase.execute(1)
+
+  res.json(true);
 });
