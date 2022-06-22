@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Owner {
+  id            Int    @id @default(autoincrement())
+  ownerableType String
+  userId        Int?   @unique
+  firmId        Int?   @unique
+  accountId     Int?   @unique
+
+  User    User?    @relation(fields: [userId], references: [id])
+  Firm    Firm?    @relation(fields: [firmId], references: [id])
+  Account Account? @relation(fields: [accountId], references: [id])
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  name  String?
+  email String  @unique
+
+  Owner Owner?
+}
+
+model Firm {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  Owner Owner?
+}
+
+model Account {
+  id            Int    @id @default(autoincrement())
+  brokerAccount String
+  ownerId       Int    @unique
+  cash          Int
+
+  Owner Owner?
+  Share Share[]
+}
+
+model FreeShareRule {
+  id             Int    @id @default(autoincrement())
+  name           String
+  percentage     Int
+  minAmount      Int
+  maxAmount      Int
+  freeShareGiven Int
+}
+
+model Share {
+  id           Int    @id @default(autoincrement())
+  tickerSymbol String
+  quantity     Int
+  accountId    Int
+
+  Account Account @relation(fields: [accountId], references: [id])
+}
